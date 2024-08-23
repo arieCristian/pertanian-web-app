@@ -54,89 +54,119 @@ class PertanianResource extends Resource
                 Textarea::make('lokasi')
                     ->columnSpan(4),
                 Select::make('lahan_id')
-                    ->relationship('lahan', 'nama')
+                    ->label('Lahan')
                     ->columnSpan(4)
                     ->searchable()
+                    ->getSearchResultsUsing(
+                        fn(string $search) =>
+                        Anggota::query()
+                            ->where('nama', 'like', "%{$search}%")
+                            ->limit(10)
+                            ->pluck('nama', 'id')
+                    )
                     ->searchDebounce(500)
-                    ->optionsLimit(20)
                     ->createOptionForm([
                         Forms\Components\TextInput::make('nama')
                             ->required()
                             ->maxLength(255),
                     ])
-                    ->createOptionUsing(function (array $data): string {
-                        $new_anggota = Anggota::create($data);
-
-                        return Lahan::create(['anggota_id' => $new_anggota->id])->anggota->nama;
-                    }),
+                    ->createOptionUsing(function (array $data): mixed {
+                        return Anggota::create($data)->id;
+                    })
+                    ->getOptionLabelUsing(fn($value) => Anggota::find($value)?->nama)
+                    ->required(),
                 Select::make('petani_id')
-                    ->relationship('petani', 'nama')
+                    ->label('Petani')
                     ->columnSpan(4)
                     ->searchable()
+                    ->getSearchResultsUsing(
+                        fn(string $search) =>
+                        Anggota::query()
+                            ->where('nama', 'like', "%{$search}%")
+                            ->limit(10)
+                            ->pluck('nama', 'id')
+                    )
                     ->searchDebounce(500)
-                    ->optionsLimit(20)
                     ->createOptionForm([
                         Forms\Components\TextInput::make('nama')
                             ->required()
                             ->maxLength(255),
                     ])
-                    ->createOptionUsing(function (array $data): string {
-                        $new_anggota = Anggota::create($data);
-
-                        return Petani::create(['anggota_id' => $new_anggota->id])->anggota->nama;
-                    }),
+                    ->createOptionUsing(function (array $data): mixed {
+                        return Anggota::create($data)->id;
+                    })
+                    ->getOptionLabelUsing(fn($value) => Anggota::find($value)?->nama)
+                    ->required(),
                 Select::make('saprodi_id')
-                    ->relationship('saprodi', 'nama')
+                    ->label('Saprodi')
                     ->columnSpan(4)
                     ->searchable()
+                    ->getSearchResultsUsing(
+                        fn(string $search) =>
+                        Anggota::query()
+                            ->where('nama', 'like', "%{$search}%")
+                            ->limit(10)
+                            ->pluck('nama', 'id')
+                    )
                     ->searchDebounce(500)
-                    ->optionsLimit(20)
                     ->createOptionForm([
                         Forms\Components\TextInput::make('nama')
                             ->required()
                             ->maxLength(255),
                     ])
-                    ->createOptionUsing(function (array $data): string {
-                        $new_anggota = Anggota::create($data);
-
-                        return Saprodi::create(['anggota_id' => $new_anggota->id])->anggota->nama;
-                    }),
+                    ->createOptionUsing(function (array $data): mixed {
+                        return Anggota::create($data)->id;
+                    })
+                    ->getOptionLabelUsing(fn($value) => Anggota::find($value)?->nama)
+                    ->required(),
                 Select::make('bibit_id')
-                    ->relationship('bibit', 'nama')
+                    ->label('Bibit')
                     ->columnSpan(4)
                     ->searchable()
+                    ->getSearchResultsUsing(
+                        fn(string $search) =>
+                        Anggota::query()
+                            ->where('nama', 'like', "%{$search}%")
+                            ->limit(10)
+                            ->pluck('nama', 'id')
+                    )
                     ->searchDebounce(500)
-                    ->optionsLimit(20)
                     ->createOptionForm([
                         Forms\Components\TextInput::make('nama')
                             ->required()
                             ->maxLength(255),
                     ])
-                    ->createOptionUsing(function (array $data): string {
-                        $new_anggota = Anggota::create($data);
-
-                        return Bibit::create(['anggota_id' => $new_anggota->id])->anggota->nama;
-                    }),
+                    ->createOptionUsing(function (array $data): mixed {
+                        return Anggota::create($data)->id;
+                    })
+                    ->getOptionLabelUsing(fn($value) => Anggota::find($value)?->nama)
+                    ->required(),
                 Select::make('korlap_id')
-                    ->relationship('korlap', 'nama')
                     ->columnSpan(4)
                     ->searchable()
+                    ->getSearchResultsUsing(
+                        fn(string $search) =>
+                        Anggota::query()
+                            ->where('nama', 'like', "%{$search}%")
+                            ->limit(10)
+                            ->pluck('nama', 'id')
+                    )
                     ->searchDebounce(500)
-                    ->optionsLimit(20)
                     ->createOptionForm([
                         Forms\Components\TextInput::make('nama')
                             ->required()
                             ->maxLength(255),
                     ])
-                    ->createOptionUsing(function (array $data): string {
-                        $new_anggota = Anggota::create($data);
-
-                        return Korlap::create(['anggota_id' => $new_anggota->id])->anggota->nama;
-                    }),
+                    ->createOptionUsing(function (array $data): mixed {
+                        return Anggota::create($data)->id;
+                    })
+                    ->getOptionLabelUsing(fn($value) => Anggota::find($value)?->nama)
+                    ->required(),
                 TextInput::make('luas_area')
                     ->columnSpan(1)
                     ->numeric()
-                    ->label('Luas Area (Dalam Are)'),
+                    ->label('Luas Area (Dalam Are)')
+                    ->required(),
                 Repeater::make('list_tanaman')
                     ->schema([
                         Select::make('tanaman_id')
