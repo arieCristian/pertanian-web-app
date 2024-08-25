@@ -13,18 +13,20 @@ use App\Models\Pertanian;
 use App\Models\Petani;
 use App\Models\Saprodi;
 use App\Models\Tanaman;
-use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+use function Laravel\Prompts\select;
 
 class PertanianResource extends Resource
 {
@@ -60,29 +62,86 @@ class PertanianResource extends Resource
                     ->searchDebounce(500)
                     ->optionsLimit(20)
                     ->createOptionForm([
-                        Forms\Components\TextInput::make('nama')
+                        Toggle::make('is_select')
+                            ->label('Pilih dari Anggota yang telah terdaftar')
+                            ->reactive()
+                            ->requiredWith(array('anggota_id', 'nama'))
+                            ->afterStateUpdated(
+                                function ($state, callable $set) {
+                                    if ($state) {
+                                        $set('anggota_id', null);
+                                        $set('nama', 'hidden');
+                                    } else {
+                                        $set('nama', null);
+                                        $set('anggota_id', 'hidden');
+                                    }
+                                }
+                            ),
+                        TextInput::make('nama')
+                            ->label('Nama Anggota Baru')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->hidden(
+                                fn($get) => $get('is_select') == true
+                            ),
+                        Select::make('anggota_id')
+                            ->label('Daftar Anggota')
+                            ->searchable()
+                            ->getSearchResultsUsing(fn(string $search): array => Anggota::where('nama', 'like', "%{$search}%")->limit(20)->pluck('nama', 'id')->toArray())
+                            ->hidden(
+                                fn($get) => $get('is_select') == false
+                            ),
                     ])
                     ->createOptionUsing(function (array $data): string {
+                        if ($data['is_select']) {
+                            return Lahan::create(['anggota_id' => $data['anggota_id']])->anggota->nama;
+                        }
                         $new_anggota = Anggota::create($data);
-
                         return Lahan::create(['anggota_id' => $new_anggota->id])->anggota->nama;
                     }),
                 Select::make('petani_id')
+                    ->label('Petani')
                     ->relationship('petani', 'nama')
                     ->columnSpan(4)
                     ->searchable()
                     ->searchDebounce(500)
                     ->optionsLimit(20)
                     ->createOptionForm([
-                        Forms\Components\TextInput::make('nama')
+                        Toggle::make('is_select')
+                            ->label('Pilih dari Anggota yang telah terdaftar')
+                            ->reactive()
+                            ->requiredWith(array('anggota_id', 'nama'))
+                            ->afterStateUpdated(
+                                function ($state, callable $set) {
+                                    if ($state) {
+                                        $set('anggota_id', null);
+                                        $set('nama', 'hidden');
+                                    } else {
+                                        $set('nama', null);
+                                        $set('anggota_id', 'hidden');
+                                    }
+                                }
+                            ),
+                        TextInput::make('nama')
+                            ->label('Nama Anggota Baru')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->hidden(
+                                fn($get) => $get('is_select') == true
+                            ),
+                        Select::make('anggota_id')
+                            ->label('Daftar Anggota')
+                            ->searchable()
+                            ->getSearchResultsUsing(fn(string $search): array => Anggota::where('nama', 'like', "%{$search}%")->limit(20)->pluck('nama', 'id')->toArray())
+                            ->hidden(
+                                fn($get) => $get('is_select') == false
+                            ),
                     ])
                     ->createOptionUsing(function (array $data): string {
+                        if ($data['is_select']) {
+                            return Petani::create(['anggota_id' => $data['anggota_id']])->anggota->nama;
+                        }
                         $new_anggota = Anggota::create($data);
-
                         return Petani::create(['anggota_id' => $new_anggota->id])->anggota->nama;
                     }),
                 Select::make('saprodi_id')
@@ -92,13 +151,41 @@ class PertanianResource extends Resource
                     ->searchDebounce(500)
                     ->optionsLimit(20)
                     ->createOptionForm([
-                        Forms\Components\TextInput::make('nama')
+                        Toggle::make('is_select')
+                            ->label('Pilih dari Anggota yang telah terdaftar')
+                            ->reactive()
+                            ->requiredWith(array('anggota_id', 'nama'))
+                            ->afterStateUpdated(
+                                function ($state, callable $set) {
+                                    if ($state) {
+                                        $set('anggota_id', null);
+                                        $set('nama', 'hidden');
+                                    } else {
+                                        $set('nama', null);
+                                        $set('anggota_id', 'hidden');
+                                    }
+                                }
+                            ),
+                        TextInput::make('nama')
+                            ->label('Nama Anggota Baru')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->hidden(
+                                fn($get) => $get('is_select') == true
+                            ),
+                        Select::make('anggota_id')
+                            ->label('Daftar Anggota')
+                            ->searchable()
+                            ->getSearchResultsUsing(fn(string $search): array => Anggota::where('nama', 'like', "%{$search}%")->limit(20)->pluck('nama', 'id')->toArray())
+                            ->hidden(
+                                fn($get) => $get('is_select') == false
+                            ),
                     ])
                     ->createOptionUsing(function (array $data): string {
+                        if ($data['is_select']) {
+                            return Saprodi::create(['anggota_id' => $data['anggota_id']])->anggota->nama;
+                        }
                         $new_anggota = Anggota::create($data);
-
                         return Saprodi::create(['anggota_id' => $new_anggota->id])->anggota->nama;
                     }),
                 Select::make('bibit_id')
@@ -108,13 +195,41 @@ class PertanianResource extends Resource
                     ->searchDebounce(500)
                     ->optionsLimit(20)
                     ->createOptionForm([
-                        Forms\Components\TextInput::make('nama')
+                        Toggle::make('is_select')
+                            ->label('Pilih dari Anggota yang telah terdaftar')
+                            ->reactive()
+                            ->requiredWith(array('anggota_id', 'nama'))
+                            ->afterStateUpdated(
+                                function ($state, callable $set) {
+                                    if ($state) {
+                                        $set('anggota_id', null);
+                                        $set('nama', 'hidden');
+                                    } else {
+                                        $set('nama', null);
+                                        $set('anggota_id', 'hidden');
+                                    }
+                                }
+                            ),
+                        TextInput::make('nama')
+                            ->label('Nama Anggota Baru')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->hidden(
+                                fn($get) => $get('is_select') == true
+                            ),
+                        Select::make('anggota_id')
+                            ->label('Daftar Anggota')
+                            ->searchable()
+                            ->getSearchResultsUsing(fn(string $search): array => Anggota::where('nama', 'like', "%{$search}%")->limit(20)->pluck('nama', 'id')->toArray())
+                            ->hidden(
+                                fn($get) => $get('is_select') == false
+                            ),
                     ])
                     ->createOptionUsing(function (array $data): string {
+                        if ($data['is_select']) {
+                            return Bibit::create(['anggota_id' => $data['anggota_id']])->anggota->nama;
+                        }
                         $new_anggota = Anggota::create($data);
-
                         return Bibit::create(['anggota_id' => $new_anggota->id])->anggota->nama;
                     }),
                 Select::make('korlap_id')
@@ -124,13 +239,41 @@ class PertanianResource extends Resource
                     ->searchDebounce(500)
                     ->optionsLimit(20)
                     ->createOptionForm([
-                        Forms\Components\TextInput::make('nama')
+                        Toggle::make('is_select')
+                            ->label('Pilih dari Anggota yang telah terdaftar')
+                            ->reactive()
+                            ->requiredWith(array('anggota_id', 'nama'))
+                            ->afterStateUpdated(
+                                function ($state, callable $set) {
+                                    if ($state) {
+                                        $set('anggota_id', null);
+                                        $set('nama', 'hidden');
+                                    } else {
+                                        $set('nama', null);
+                                        $set('anggota_id', 'hidden');
+                                    }
+                                }
+                            ),
+                        TextInput::make('nama')
+                            ->label('Nama Anggota Baru')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->hidden(
+                                fn($get) => $get('is_select') == true
+                            ),
+                        Select::make('anggota_id')
+                            ->label('Daftar Anggota')
+                            ->searchable()
+                            ->getSearchResultsUsing(fn(string $search): array => Anggota::where('nama', 'like', "%{$search}%")->limit(20)->pluck('nama', 'id')->toArray())
+                            ->hidden(
+                                fn($get) => $get('is_select') == false
+                            ),
                     ])
                     ->createOptionUsing(function (array $data): string {
+                        if ($data['is_select']) {
+                            return Korlap::create(['anggota_id' => $data['anggota_id']])->anggota->nama;
+                        }
                         $new_anggota = Anggota::create($data);
-
                         return Korlap::create(['anggota_id' => $new_anggota->id])->anggota->nama;
                     }),
                 TextInput::make('luas_area')
