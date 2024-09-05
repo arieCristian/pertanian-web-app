@@ -59,4 +59,10 @@ class Pertanian extends Model
     {
         return $this->hasMany(JumTanaman::class);
     }
+
+    public function getTanamanData($tanamanId)
+    {
+        $jumTanaman = $this->jumTanaman()->where('tanaman_id', $tanamanId)->first();
+        return $jumTanaman ? $jumTanaman->jumlah : null;
+    }
 }

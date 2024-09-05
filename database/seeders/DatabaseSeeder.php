@@ -4,10 +4,13 @@ namespace Database\Seeders;
 
 use App\Models\Anggota;
 use App\Models\Bibit;
+use App\Models\Desa;
+use App\Models\Harga;
 use App\Models\Korlap;
 use App\Models\Lahan;
 use App\Models\Petani;
 use App\Models\Saprodi;
+use App\Models\Tanaman;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -95,6 +98,42 @@ class DatabaseSeeder extends Seeder
 
         Korlap::create([
             'anggota_id' => 5,
+        ]);
+
+        Tanaman::create([
+            'nama' => 'Alpukat',
+        ]);
+        Tanaman::create([
+            'nama' => 'Nanas',
+        ]);
+        Tanaman::create([
+            'nama' => 'Durian',
+        ]);
+
+        Desa::create([
+            'nama' => 'Batur Selatan',
+        ]);
+        Desa::create([
+            'nama' => 'Batur Utara',
+        ]);
+        Desa::create([
+            'nama' => 'Abang Batu Dinding',
+        ]);
+
+        Harga::create([
+            'tanaman_id' => 1,
+            'grade' => 'B',
+            'harga' => 50000,
+        ]);
+        Harga::create([
+            'tanaman_id' => 1,
+            'grade' => 'C',
+            'harga' => 40000,
+        ]);
+        Harga::create([
+            'tanaman_id' => 1,
+            'grade' => 'A',
+            'harga' => 5700,
         ]);
     }
 }

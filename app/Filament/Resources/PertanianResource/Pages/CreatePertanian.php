@@ -16,7 +16,6 @@ class CreatePertanian extends CreateRecord
     {
         $list_tanaman = $data['list_tanaman'];
         unset($data['list_tanaman']);
-        // dd($data);
         $record = Pertanian::create($data);
         foreach ($list_tanaman as $tanaman) {
             $tanaman['pertanian_id'] = $record->id;

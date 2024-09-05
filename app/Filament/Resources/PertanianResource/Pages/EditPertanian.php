@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PertanianResource\Pages;
 
 use App\Filament\Resources\PertanianResource;
+use App\Models\Pertanian;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

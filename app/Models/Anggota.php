@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Anggota extends Model
 {
@@ -42,8 +43,8 @@ class Anggota extends Model
     {
         return $this->hasMany(Korlap::class);
     }
-    public function bibit(): HasMany
+    public function bibit(): HasOne
     {
-        return $this->hasMany(Bibit::class);
+        return $this->hasOne(Bibit::class);
     }
 }
