@@ -29,6 +29,11 @@ class Transaksi extends Model
 
     public function pertanian(): HasMany
     {
+        return $this->hasMany(Pertanian::class);
+    }
+
+    public function detail_transaksi(): HasMany
+    {
         return $this->hasMany(DetailTransaksi::class);
     }
 }

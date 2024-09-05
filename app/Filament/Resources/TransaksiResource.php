@@ -4,9 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TransaksiResource\Pages;
 use App\Filament\Resources\TransaksiResource\RelationManagers;
+use App\Models\Harga;
 use App\Models\Pertanian;
+use App\Models\Tanaman;
 use App\Models\Transaksi;
 use Filament\Forms;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -30,18 +33,47 @@ class TransaksiResource extends Resource
                     ->searchable()
                     ->searchDebounce(500)
                     ->getSearchResultsUsing(function (string $search) {
-                        return Pertanian::query(function (Builder $query) {
-                            $query->whereHas('petani', function (Builder $query) {
-                                $query->whereHas('anggota', function (Builder $query) {
-                                    $query->where('nama', 'like', '%' . request('search') . '%');
-                                });
-                            });
-                        })->pluck('anggota.nama', 'id');
+                        return Pertanian::query()
+                            ->join('petani', 'petani.id', '=', 'pertanian.petani_id')
+                            ->join('anggota', 'petani.anggota_id', '=', 'anggota.id')
+                            ->where('anggota.nama', 'like', "%{$search}%")
+                            ->limit(10) // Limit the number of results
+                            ->pluck('anggota.nama', 'pertanian.id');
                     })
                     ->getOptionLabelUsing(function ($value) {
-                        $lahan = Pertanian::find($value);
-                        return $lahan ? $lahan->anggota->nama : null;
-                    })
+                        $petani = Pertanian::find($value);
+                        return $petani ? $petani->anggota->nama : null;
+                    }),
+                Repeater::make('transaksi')
+                    ->relationship('detail_transaksi')
+                    ->schema([
+                        Select::make('tanaman_id')
+                            ->options(Tanaman::all()->pluck('tanaman', 'id'))
+                            ->required()
+                            ->label('Tanaman')
+                            ->reactive() // Make it reactive to trigger changes in the next field
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $set('harga_id', null);
+                            }),
+                        Select::make('harga_id')
+                            ->required()
+                            ->label('Grade')
+                            ->options(function (callable $get) {
+                                $selectedTanamanId = $get('tanaman_id');
+                                if ($selectedTanamanId) {
+                                    return Harga::where('tanaman_id', $selectedTanamanId)->pluck('grade', 'id');
+                                }
+                                return [];
+                            })
+                            ->dependsOn(['tanaman_id']),
+                        Harga::make('jumlah')
+                            ->numeric()
+                            ->required(),
+                    ])
+                    ->label('Jumlah Tanaman')
+                    ->addActionLabel('Tambah Tanaman')
+                    ->columnStart(1)
+                    ->columns(1),
             ]);
     }
 

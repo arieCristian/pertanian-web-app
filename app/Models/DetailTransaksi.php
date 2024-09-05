@@ -28,7 +28,7 @@ class DetailTransaksi extends Model
     protected $guarded = ['id'];
 
 
-    public function pertanian(): BelongsTo
+    public function transaksi(): BelongsTo
     {
         return $this->belongsTo(Transaksi::class, 'transaksi_id');
     }
