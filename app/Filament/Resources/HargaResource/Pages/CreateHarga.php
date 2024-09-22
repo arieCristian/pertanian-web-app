@@ -13,7 +13,6 @@ class CreateHarga extends CreateRecord
 
     protected function handleRecordCreation(array $data): Harga
     {
-        dd($data);
         $data['harga'] = $this->setAmountAttribute($data['harga']);
         return Harga::create($data);
     }
